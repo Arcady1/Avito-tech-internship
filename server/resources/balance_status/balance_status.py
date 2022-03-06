@@ -3,7 +3,7 @@ import pathlib, os
 
 # Third Party Modules
 from flask_restful import Resource, reqparse
-from pymysql.err import OperationalError
+from pymysql.err import OperationalError, ProgrammingError
 
 # Project Modules
 from server.db.work_with_db import db_query
@@ -56,20 +56,23 @@ class BalanceStatus(Resource):
                 response["data"]["userBalance"] = result[0]["balance"]
             response["status"] = 200
             response["message"] = "Success: getting a user's balance in the database by ID"
-        except AttributeError:
+        except AttributeError as err:
             response["status"] = 400
             response["message"] = "Error: connecting to MySQL database"
-        except OperationalError:
+            response["description"] = str(err)
+        except OperationalError as err:
             response["status"] = 400
             response["message"] = "Error: invalid MySQL database name"
-        except Exception:
+            response["description"] = str(err)
+        except ProgrammingError as err:
+            response["status"] = 400
+            response["message"] = "Error: invalid MySQL syntax"
+            response["description"] = str(err)
+        except Exception as err:
             response["message"] = "Error: working with MySQL database"
+            response["description"] = str(err)
             response["status"] = 500
         return response, response["status"]
 
     def get(self):
-        """
-        TODO
-        :return:
-        """
         return self.get_user_balance()

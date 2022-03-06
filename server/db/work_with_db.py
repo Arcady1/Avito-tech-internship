@@ -16,12 +16,12 @@ class DatabaseConnection:
     def __enter__(self):
         try:
             self.connection = pymysql.connect(
-                host=os.getenv("MYSQL_HOST"),
-                user=os.getenv("MYSQL_USER"),
-                password=os.getenv("MYSQL_PASSWORD"),
-                database=os.getenv("MYSQL_DB"),
+                host=os.getenv("MYSQL_LOCAL_HOST"),
+                user=os.getenv("MYSQL_LOCAL_USER"),
+                password=os.getenv("MYSQL_LOCAL_PASSWORD"),
+                database=os.getenv("MYSQL_LOCAL_DB"),
                 charset='utf8mb4',
-                port=int(os.getenv("MYSQL_PORT")),
+                port=int(os.getenv("MYSQL_LOCAL_PORT")),
                 cursorclass=pymysql.cursors.DictCursor
             )
             self.cursor = self.connection.cursor()
@@ -59,10 +59,10 @@ def read_query_from_file(file_path: str, params: dict):
 def db_query(file_path: str, **params):
     """
     The function executes a database query and returns a response.
-    TODO
+
     :param file_path: str. A path to the file.
     :param params: dict. Query parameters.
-    :return: None.
+    :return: None. list. Query results.
     """
     with DatabaseConnection() as cursor:
         sql_query = read_query_from_file(file_path=file_path, params=params)

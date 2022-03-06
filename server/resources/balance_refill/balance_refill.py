@@ -7,6 +7,7 @@ from flask_restful import Resource, reqparse
 # Project Modules
 from server.resources.balance_status.balance_status import BalanceStatus
 from server.db.work_with_db import db_query
+from server.utils import id_generator
 
 
 class BalanceRefill(BalanceStatus, Resource):
@@ -16,12 +17,9 @@ class BalanceRefill(BalanceStatus, Resource):
         BalanceStatus.__init__(self)
         self.SQL_PATH_REFILL = os.path.join(pathlib.Path(__file__).parent.resolve(), "sql")
         self.amount = 0
+        self.transaction_id = id_generator()
 
     def put(self):
-        """
-        TODO
-        :return:
-        """
         # Server response
         response = self.get_user_balance()[0].copy()
         if response["status"] >= 400:
@@ -69,5 +67,26 @@ class BalanceRefill(BalanceStatus, Resource):
                 response["message"] = "Error: increasing user account balance"
                 response["desciption"] = str(err)
                 return response, response["status"]
+        # Saving the transaction to the DB
+        try:
+            db_query(file_path=os.path.join(self.SQL_PATH_REFILL, "save_transaction.sql"),
+                     user_id=self.user_id,
+                     transaction_id=self.transaction_id,
+                     type_="refill")
+        except Exception as err:
+            response["status"] = 500
+            response["message"] = "Error: saving the transaction to the db"
+            response["desciption"] = str(err)
+            return response, response["status"]
+        # Adding transaction to the DB
+        try:
+            db_query(file_path=os.path.join(self.SQL_PATH_REFILL, "add_transaction.sql"),
+                     user_id=self.user_id,
+                     transaction_id=self.transaction_id)
+        except Exception as err:
+            response["status"] = 500
+            response["message"] = "Error: adding the transaction to the db"
+            response["desciption"] = str(err)
+            return response, response["status"]
         response["status"] = 201
         return response, response["status"]
