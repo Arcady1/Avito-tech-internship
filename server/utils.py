@@ -9,3 +9,10 @@ def id_generator():
     :return: str. Unique id
     """
     return str(uuid4())
+
+
+def modify_response(response: dict, status: int, message: str = "", error=""):
+    """ The function modifies a response. """
+    response["status"] = status
+    response["message"] = message
+    response["description"] = str(error)

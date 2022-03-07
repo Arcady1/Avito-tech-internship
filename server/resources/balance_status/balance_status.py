@@ -7,6 +7,7 @@ from pymysql.err import OperationalError, ProgrammingError
 
 # Project Modules
 from server.db.work_with_db import db_query
+from server.utils import modify_response
 
 
 class BalanceStatus(Resource):
@@ -43,9 +44,8 @@ class BalanceStatus(Resource):
                 raise ValueError("Error: user_id value must be more than zero")
             response["data"]["userId"] = self.user_id
         except Exception as err:
-            response["status"] = 400
-            response["message"] = "Error: user_id type must be integer and the value must be more than zero"
-            response["description"] = str(err)
+            mes = "Error: user_id type must be integer and the value must be more than zero"
+            modify_response(response=response, status=400, message=mes, error=err)
             return response, response["status"]
 
         # Getting a user's balance in the database by ID
@@ -54,24 +54,20 @@ class BalanceStatus(Resource):
                               user_id=self.user_id)
             if result:
                 response["data"]["userBalance"] = result[0]["balance"]
-            response["status"] = 200
-            response["message"] = "Success: getting a user's balance in the database by ID"
+            mes = "Success: getting a user's balance in the database by ID"
+            modify_response(response=response, status=200, message=mes)
         except AttributeError as err:
-            response["status"] = 400
-            response["message"] = "Error: connecting to MySQL database"
-            response["description"] = str(err)
+            mes = "Error: connecting to MySQL database"
+            modify_response(response=response, status=400, message=mes, error=err)
         except OperationalError as err:
-            response["status"] = 400
-            response["message"] = "Error: invalid MySQL database name"
-            response["description"] = str(err)
+            mes = "Error: invalid MySQL database name"
+            modify_response(response=response, status=400, message=mes, error=err)
         except ProgrammingError as err:
-            response["status"] = 400
-            response["message"] = "Error: invalid MySQL syntax"
-            response["description"] = str(err)
+            mes = "Error: invalid MySQL syntax"
+            modify_response(response=response, status=400, message=mes, error=err)
         except Exception as err:
-            response["message"] = "Error: working with MySQL database"
-            response["description"] = str(err)
-            response["status"] = 500
+            mes = "Error: working with MySQL database"
+            modify_response(response=response, status=500, message=mes, error=err)
         return response, response["status"]
 
     def get(self):
