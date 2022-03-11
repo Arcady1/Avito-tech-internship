@@ -15,4 +15,5 @@ def modify_response(response: dict, status: int, message: str = "", error=""):
     """ The function modifies a response. """
     response["status"] = status
     response["message"] = message
-    response["description"] = str(error)
+    if error:
+        response["description"] = str(error)

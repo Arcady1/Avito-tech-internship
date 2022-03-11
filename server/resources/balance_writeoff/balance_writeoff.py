@@ -19,26 +19,29 @@ class BalanceWriteoff(BalanceRefill, Resource):
         self.SQL_PATH_WRITEOFF = os.path.join(pathlib.Path(__file__).parent.resolve(), "sql")
         self.balance_after_debit = None
         self.transaction_id = id_generator()
+        self.amount = 0
+        self.user_id = None
 
     def put(self):
-        # Server response
-        response = self.get_user_balance()[0].copy()
-        if response["status"] >= 400:
-            return response, response["status"]
-        response = self.check_amount_value(response=response)[0]
-        if response["status"] >= 400:
-            return response, response["status"]
+        # Getting user balance by 'user_id'
+        self.get_user_balance(query_argument_with_uid="user_id")
+        if self.response["status"] >= 400:
+            return self.response, self.response["status"]
+        # Cheking the 'amount' value
+        self.check_amount_value()
+        if self.response["status"] >= 400:
+            return self.response, self.response["status"]
 
         # If the amount greater than the user's balance
         try:
-            if self.amount > response["data"]["userBalance"]:
+            if self.amount > self.response["data"]["userBalance"]:
                 raise ValueError("Error: the debit amount cannot exceed the user's balance")
-            self.balance_after_debit = response["data"]["userBalance"] - self.amount
-            response["data"]["userBalance"] = self.balance_after_debit
+            self.balance_after_debit = self.response["data"]["userBalance"] - self.amount
+            self.response["data"]["userBalance"] = self.balance_after_debit
         except Exception as err:
             mes = "Error: wrong debit amount"
-            modify_response(response=response, status=400, message=mes, error=err)
-            return response, response["status"]
+            modify_response(response=self.response, status=400, message=mes, error=err)
+            return self.response, self.response["status"]
 
         # Change the user balance
         try:
@@ -46,26 +49,26 @@ class BalanceWriteoff(BalanceRefill, Resource):
                      balance_after_debit=self.balance_after_debit,
                      uid=self.user_id)
             mes = "Success: the debit was successful"
-            modify_response(response=response, status=201, message=mes)
+            modify_response(response=self.response, status=200, message=mes)
         except Exception as err:
             mes = "Error: changing the user balance"
-            modify_response(response=response, status=400, message=mes, error=err)
-            return response, response["status"]
+            modify_response(response=self.response, status=400, message=mes, error=err)
+            return self.response, self.response["status"]
 
         # Saving the transaction to the DB
         try:
-            db_query(file_path=os.path.join(self.SQL_PATH_WRITEOFF, "add_transaction.sql"),
+            db_query(file_path=os.path.join(self.MAIN_SQL_PATH, "add_transaction.sql"),
+                     user_column="sender_uid",
                      user_id=self.user_id,
                      transaction_id=self.transaction_id,
                      type_="write-off")
         except Exception as err:
             mes = "Error: saving the transaction to the db"
-            modify_response(response=response, status=500, message=mes, error=err)
-            return response, response["status"]
+            modify_response(response=self.response, status=500, message=mes, error=err)
+            return self.response, self.response["status"]
 
         # Saving the IDs of the transaction
-        # Server response
-        response = self.save_transaction_ids(response=response)[0]
-        if response["status"] >= 400:
-            return response, response["status"]
-        return response, response["status"]
+        self.save_transaction_ids()
+        if self.response["status"] >= 400:
+            return self.response, self.response["status"]
+        return self.response, self.response["status"]
