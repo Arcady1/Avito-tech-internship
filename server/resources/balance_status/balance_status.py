@@ -32,7 +32,7 @@ class BalanceStatus(Balance, Resource):
         parser = reqparse.RequestParser()
         parser.add_argument(query_argument_with_currency, required=False)
         args = parser.parse_args()
-        to_currency = args[query_argument_with_currency]
+        to_currency = args[query_argument_with_currency].upper()
 
         if (to_currency == "RUB") or (to_currency is None):
             return (amount_RUB, "RUB")
@@ -48,6 +48,7 @@ class BalanceStatus(Balance, Resource):
             resp = requests.get(url=url,
                                 params=querystring)
             resp = resp.json()
+            print(resp)
             if resp["status"] == "failed":
                 raise ValueError(resp["error"]["message"])
             if not resp["rates"]:
