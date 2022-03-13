@@ -68,7 +68,8 @@ class BalanceRefill(Balance, Resource):
                      user_column="reciever_uid",
                      user_id=self.user_id,
                      transaction_id=self.transaction_id,
-                     type_="refill")
+                     type_="Refill",
+                     amount=self.amount)
         except Exception as err:
             mes = "Error: saving the transaction to the db, BUT userBalance is increased"
             modify_response(response=self.response, status=500, message=mes, error=err)

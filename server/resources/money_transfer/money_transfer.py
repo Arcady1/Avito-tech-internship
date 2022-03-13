@@ -39,6 +39,14 @@ class MoneyTransfer(Balance, Resource):
         self.response["data"]["reciever"]["id"] = self.reciever_uid
         self.response["data"]["reciever"]["balance"] = self.reciever_balance
 
+        # If user ID is not found
+        if (self.sender_balance is None) or (self.reciever_balance is None):
+            non_uid = self.sender_uid
+            if self.sender_balance is not None: non_uid = self.reciever_uid
+            mes = f"Error: the user ID={non_uid} is not found"
+            modify_response(response=self.response, status=400, message=mes)
+            return self.response, self.response["status"]
+
         # Cheking the 'amount' value
         self.amount = self.check_amount_value(query_argument_with_amount="amount")
         if self.response["status"] >= 400:
@@ -74,7 +82,8 @@ class MoneyTransfer(Balance, Resource):
                      transaction_id=self.transaction_id,
                      sender_uid=self.sender_uid,
                      reciever_uid=self.reciever_uid,
-                     type_="money_transfer")
+                     type_="Money transfer",
+                     amount=self.amount)
         except Exception as err:
             mes = "Error: saving the transaction to the db, BUT money transfer is completed"
             modify_response(response=self.response, status=500, message=mes, error=err)

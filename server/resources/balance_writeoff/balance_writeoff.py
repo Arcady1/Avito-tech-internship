@@ -65,7 +65,8 @@ class BalanceWriteoff(Balance, Resource):
                      user_column="sender_uid",
                      user_id=self.user_id,
                      transaction_id=self.transaction_id,
-                     type_="write-off")
+                     type_="Write-off",
+                     amount=self.amount)
         except Exception as err:
             mes = "Error: saving the transaction to the db, BUT userBalance is reduced."
             modify_response(response=self.response, status=500, message=mes, error=err)

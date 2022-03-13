@@ -4,7 +4,6 @@ import os
 # Third Party Modules
 from flask_restful import Resource, reqparse
 import requests
-import dotenv
 
 # Project Modules
 from server.resources.balance.balance import Balance
@@ -32,9 +31,12 @@ class BalanceStatus(Balance, Resource):
         parser = reqparse.RequestParser()
         parser.add_argument(query_argument_with_currency, required=False)
         args = parser.parse_args()
-        to_currency = args[query_argument_with_currency].upper()
+        to_currency = args[query_argument_with_currency]
 
-        if (to_currency == "RUB") or (to_currency is None):
+        if to_currency is None:
+            return (amount_RUB, "RUB")
+        to_currency = to_currency.upper()
+        if to_currency == "RUB":
             return (amount_RUB, "RUB")
 
         # Transfer balance to 'currency'
