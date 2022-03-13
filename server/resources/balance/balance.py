@@ -28,7 +28,8 @@ class Balance(Resource):
                     "id": None,
                     "balance": None
                 },
-                "amount": None
+                "amount": None,
+                "currency": "RUB"
             }
         }
         self.MAIN_SQL_PATH = os.path.join(pathlib.Path(__file__).parent.resolve(), "sql")
