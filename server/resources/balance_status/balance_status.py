@@ -12,6 +12,12 @@ class BalanceStatus(Balance, Resource):
         Balance.__init__(self)
         self.user_id = None
         self.user_balance = None
+        self.currency = "RUB"
+
+    def transform_currency(self, amount_RUB: float, to_currency: str):
+        """ TODO """
+        if to_currency == "RUB":
+            return
 
     def get(self):
         self.user_id, self.user_balance = self.get_user_balance(query_argument_with_uid="user_id")

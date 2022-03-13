@@ -33,12 +33,13 @@ class Balance(Resource):
         }
         self.MAIN_SQL_PATH = os.path.join(pathlib.Path(__file__).parent.resolve(), "sql")
 
-    def check_amount_value(self, query_argument_with_amount):
+    def check_amount_value(self, query_argument_with_amount: str):
         """
         The function checks the 'amount' query argumnet.
         The function modifies a response.
 
-        :returns: float / None. Value of 'amount' argumnet.
+        :param query_argument_with_amount: str. The name of query parametr with an amount.
+        :return: float / None. Value of 'amount' argumnet.
         """
         parser = reqparse.RequestParser()
         parser.add_argument(query_argument_with_amount, required=True)
@@ -56,12 +57,12 @@ class Balance(Resource):
             modify_response(response=self.response, status=400, message=mes, error=err)
             return
 
-    def check_user_id_value(self, query_argument):
+    def check_user_id_value(self, query_argument: str):
         """
         The function checks the 'user_id' query argumnet.
         The function modifies a response.
 
-        :param query_argument: str. The name of the argument with user id.
+        :param query_argument: str. The name of query parametr with a user ID.
         :return: int / None. The user id.
         """
         parser = reqparse.RequestParser()
@@ -80,10 +81,13 @@ class Balance(Resource):
             modify_response(response=self.response, status=400, message=mes, error=err)
             return
 
-    def save_transaction_ids(self, user_id, transaction_id):
+    def save_transaction_ids(self, user_id: int, transaction_id: int):
         """
         The function saves the user ID and transaction ID.
         The function modifies a response.
+
+        :param user_id: int. The user ID
+        :param transaction_id: The transaction ID
         """
         try:
             db_query(file_path=os.path.join(self.MAIN_SQL_PATH, "save_transaction_ids.sql"),
@@ -94,11 +98,12 @@ class Balance(Resource):
             mes = "Error: adding the transaction to the db"
             modify_response(response=self.response, status=500, message=mes, error=err)
 
-    def get_user_balance(self, query_argument_with_uid):
+    def get_user_balance(self, query_argument_with_uid: str):
         """
         The function gets users' balance from the DB by ID.
         The function modifies a response.
 
+        :param query_argument_with_uid: str. The name of query parametr with a user ID.
         :return: tuple. User ID and the balance.
         """
 

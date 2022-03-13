@@ -64,7 +64,7 @@ def db_query(file_path: str, **params):
 
     :param file_path: str. A path to the file.
     :param params: dict. Query parameters.
-    :return: None. list. Query results.
+    :return: list / None. Query results.
     """
     with DatabaseConnection() as cursor:
         sql_query = read_query_from_file(file_path=file_path, params=params)

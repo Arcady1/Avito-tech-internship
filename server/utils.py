@@ -12,7 +12,14 @@ def id_generator():
 
 
 def modify_response(response: dict, status: int, message: str = "", error=""):
-    """ The function modifies a response. """
+    """
+    The function modifies a response.
+
+    :param response: dict. A link to response dict.
+    :param status: int. A response status code.
+    :param message: str. A response message.
+    :param error: Error. An error
+    """
     response["status"] = status
     response["message"] = message
     if error:
