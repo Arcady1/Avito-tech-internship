@@ -1,2 +1,2 @@
  SELECT * FROM users
- WHERE id=$user_id;
+ WHERE id = $user_id;

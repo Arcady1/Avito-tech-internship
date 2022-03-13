@@ -3,6 +3,7 @@ import pathlib, os
 
 # Third Party Modules
 from flask_restful import Resource, reqparse
+from pymysql.err import OperationalError, ProgrammingError
 
 # Project Modules
 from server.db.work_with_db import db_query
@@ -19,33 +20,49 @@ class Balance(Resource):
             "data": {
                 "userId": None,
                 "userBalance": None,
+                "sender": {
+                    "id": None,
+                    "balance": None
+                },
+                "reciever": {
+                    "id": None,
+                    "balance": None
+                },
+                "amount": None
             }
         }
         self.MAIN_SQL_PATH = os.path.join(pathlib.Path(__file__).parent.resolve(), "sql")
 
-    def check_amount_value(self):
-        """ The function checks the 'amount' query argumnet. """
+    def check_amount_value(self, query_argument_with_amount):
+        """
+        The function checks the 'amount' query argumnet.
+        The function modifies a response.
+
+        :returns: float / None. Value of 'amount' argumnet.
+        """
         parser = reqparse.RequestParser()
-        parser.add_argument("amount", required=True)
+        parser.add_argument(query_argument_with_amount, required=True)
         args = parser.parse_args()
 
         # 'Amount' data type check
         try:
-            self.amount = float(args["amount"])
-            if self.amount < 0:
+            amount = float(args[query_argument_with_amount])
+            if amount < 0.000001:
                 raise ValueError("Error: amount value must be more than zero")
-            self.response["data"]["amount"] = self.amount
             self.response["status"] = 200
+            return amount
         except Exception as err:
             mes = "Error: amount type must be float and the value must be more than zero"
             modify_response(response=self.response, status=400, message=mes, error=err)
+            return
 
     def check_user_id_value(self, query_argument):
         """
         The function checks the 'user_id' query argumnet.
+        The function modifies a response.
 
         :param query_argument: str. The name of the argument with user id.
-        :return: int. The user id.
+        :return: int / None. The user id.
         """
         parser = reqparse.RequestParser()
         parser.add_argument(query_argument, required=True)
@@ -54,21 +71,67 @@ class Balance(Resource):
         # 'UserId' data type check
         try:
             id = int(args[query_argument])
-            if id < 0:
+            if id < 1:
                 raise ValueError("Error: user_id value must be more than zero")
             self.response["status"] = 200
             return id
         except Exception as err:
             mes = "Error: user_id type must be integer and the value must be more than zero"
             modify_response(response=self.response, status=400, message=mes, error=err)
+            return
 
-    def save_transaction_ids(self):
-        """ The function saves the user ID and transaction ID. """
+    def save_transaction_ids(self, user_id, transaction_id):
+        """
+        The function saves the user ID and transaction ID.
+        The function modifies a response.
+        """
         try:
             db_query(file_path=os.path.join(self.MAIN_SQL_PATH, "save_transaction_ids.sql"),
-                     user_id=self.user_id,
-                     transaction_id=self.transaction_id)
+                     user_id=user_id,
+                     transaction_id=transaction_id)
             self.response["status"] = 200
         except Exception as err:
             mes = "Error: adding the transaction to the db"
             modify_response(response=self.response, status=500, message=mes, error=err)
+
+    def get_user_balance(self, query_argument_with_uid):
+        """
+        The function gets users' balance from the DB by ID.
+        The function modifies a response.
+
+        :return: tuple. User ID and the balance.
+        """
+
+        # Checking 'query_argument_with_uid' value
+        user_id = self.check_user_id_value(query_argument=query_argument_with_uid)
+        if user_id is None:
+            return (user_id, None)
+
+        # Getting a user's balance in the database by ID
+        try:
+            result = db_query(file_path=os.path.join(self.MAIN_SQL_PATH, "balance_status.sql"),
+                              user_id=user_id)
+            if len(result) > 1:
+                raise ValueError(f"Error: there are {len(result)} users with id={user_id} in a DB")
+            elif len(result) == 1:
+                mes = "Success: getting a users' balance in the database by ID"
+                modify_response(response=self.response, status=200, message=mes)
+                return (user_id, result[0]["balance"])
+            elif not result:
+                mes = f"Warning: user with id={user_id} not found"
+                modify_response(response=self.response, status=200, message=mes)
+                return (user_id, None)
+        except AttributeError as err:
+            mes = "Error: connecting to MySQL database"
+            modify_response(response=self.response, status=400, message=mes, error=err)
+        except OperationalError as err:
+            mes = "Error: invalid MySQL database name"
+            modify_response(response=self.response, status=400, message=mes, error=err)
+        except ProgrammingError as err:
+            mes = "Error: invalid MySQL syntax"
+            modify_response(response=self.response, status=400, message=mes, error=err)
+        except Exception as err:
+            mes = "Error: working with MySQL database"
+            modify_response(response=self.response, status=500, message=mes, error=err)
+
+        return (user_id, None)

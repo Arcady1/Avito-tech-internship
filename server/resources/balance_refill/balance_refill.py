@@ -5,17 +5,17 @@ import pathlib, os
 from flask_restful import Resource
 
 # Project Modules
-from server.resources.balance_status.balance_status import BalanceStatus
+from server.resources.balance.balance import Balance
 from server.db.work_with_db import db_query
 from server.utils import id_generator
 from server.utils import modify_response
 
 
-class BalanceRefill(BalanceStatus, Resource):
+class BalanceRefill(Balance, Resource):
     """ Class for working with the client's balance for refill. """
 
     def __init__(self):
-        BalanceStatus.__init__(self)
+        Balance.__init__(self)
         self.SQL_PATH_REFILL = os.path.join(pathlib.Path(__file__).parent.resolve(), "sql")
         self.transaction_id = id_generator()
         self.user_id = None
@@ -23,14 +23,17 @@ class BalanceRefill(BalanceStatus, Resource):
 
     def put(self):
         # Getting user balance by 'user_id'
-        self.get_user_balance(query_argument_with_uid="user_id")
+        self.user_id, self.user_balance = self.get_user_balance(query_argument_with_uid="user_id")
         if self.response["status"] >= 400:
             return self.response, self.response["status"]
+        self.response["data"]["userId"] = self.user_id
+        self.response["data"]["userBalance"] = self.user_balance
 
         # Cheking the 'amount' value
-        self.check_amount_value()
+        self.amount = self.check_amount_value(query_argument_with_amount="amount")
         if self.response["status"] >= 400:
             return self.response, self.response["status"]
+        self.response["data"]["amount"] = self.amount
 
         # Adding a user to the database and setting the balance
         if self.response["data"]["userBalance"] is None:
@@ -47,8 +50,6 @@ class BalanceRefill(BalanceStatus, Resource):
                 return self.response, self.response["status"]
         # Increasing user account balance
         else:
-            print("self.user_id", self.user_id)
-            print("self.amount", self.amount)
             try:
                 db_query(file_path=os.path.join(self.SQL_PATH_REFILL, "increase_balance.sql"),
                          user_id=self.user_id,
@@ -69,12 +70,14 @@ class BalanceRefill(BalanceStatus, Resource):
                      transaction_id=self.transaction_id,
                      type_="refill")
         except Exception as err:
-            mes = "Error: saving the transaction to the db"
+            mes = "Error: saving the transaction to the db, BUT userBalance is increased"
             modify_response(response=self.response, status=500, message=mes, error=err)
             return self.response, self.response["status"]
 
         # Saving the IDs of the transaction
-        self.save_transaction_ids()
+        self.save_transaction_ids(user_id=self.user_id,
+                                  transaction_id=self.transaction_id)
         if self.response["status"] >= 400:
             return self.response, self.response["status"]
+
         return self.response, self.response["status"]

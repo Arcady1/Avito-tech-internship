@@ -4,6 +4,7 @@ import os
 
 # Third Party Modules
 import pymysql
+from pymysql.constants import CLIENT
 
 
 class DatabaseConnection:
@@ -22,7 +23,8 @@ class DatabaseConnection:
                 database=os.getenv("MYSQL_LOCAL_DB"),
                 charset='utf8mb4',
                 port=int(os.getenv("MYSQL_LOCAL_PORT")),
-                cursorclass=pymysql.cursors.DictCursor
+                cursorclass=pymysql.cursors.DictCursor,
+                client_flag=CLIENT.MULTI_STATEMENTS
             )
             self.cursor = self.connection.cursor()
             return self.cursor

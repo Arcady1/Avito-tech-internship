@@ -1,3 +1,3 @@
 UPDATE users
-SET balance=$balance_after_debit
-WHERE id=$uid;
+SET balance = $current_balance - $amount
+WHERE id = $user_id;
