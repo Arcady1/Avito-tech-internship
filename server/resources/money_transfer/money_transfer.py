@@ -16,7 +16,7 @@ class MoneyTransfer(Balance, Resource):
 
     def __init__(self):
         Balance.__init__(self)
-        self.MONEY_TRANSFER_SQL_PATH = os.path.join(pathlib.Path(__file__).parent.resolve(), "sql")
+        self.SQL_PATH_MONEY_TRANSFER = os.path.join(pathlib.Path(__file__).parent.resolve(), "sql")
         self.transaction_id = id_generator()
         self.sender_uid = None
         self.sender_balance = None
@@ -61,7 +61,7 @@ class MoneyTransfer(Balance, Resource):
 
         # Money transfer
         try:
-            db_query(file_path=os.path.join(self.MONEY_TRANSFER_SQL_PATH, "money_transfer.sql"),
+            db_query(file_path=os.path.join(self.SQL_PATH_MONEY_TRANSFER, "money_transfer.sql"),
                      sender_uid=self.sender_uid,
                      reciever_uid=self.reciever_uid,
                      sender_balance=self.sender_balance,
@@ -78,7 +78,7 @@ class MoneyTransfer(Balance, Resource):
 
         # Saving the transaction to the DB
         try:
-            db_query(file_path=os.path.join(self.MONEY_TRANSFER_SQL_PATH, "add_transaction.sql"),
+            db_query(file_path=os.path.join(self.SQL_PATH_MONEY_TRANSFER, "add_transaction.sql"),
                      transaction_id=self.transaction_id,
                      sender_uid=self.sender_uid,
                      reciever_uid=self.reciever_uid,

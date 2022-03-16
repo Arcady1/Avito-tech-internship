@@ -2,7 +2,7 @@
 import pathlib, os
 
 # Third Party Modules
-from flask_restful import Resource, reqparse
+from flask_restful import Resource
 
 # Project Modules
 from server.resources.balance.balance import Balance
@@ -34,9 +34,7 @@ class DetailedTransactions(Balance, Resource):
                 "amount": el["amount"],
                 "date": el["date_"].strftime("%Y-%m-%d, %H:%M:%S")
             }
-            if el["type_"] != "Money transfer":
-                tmpl["userId"] = el["sender_uid"] or el["reciever_uid"]
-            else:
+            if el["type_"] == "Money transfer":
                 tmpl["senderUid"] = el["sender_uid"]
                 tmpl["recieverUid"] = el["reciever_uid"]
             prepared_data.append(tmpl)

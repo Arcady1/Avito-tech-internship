@@ -36,6 +36,15 @@ class BalanceWriteoff(Balance, Resource):
             return self.response, self.response["status"]
         self.response["data"]["amount"] = self.amount
 
+        # If the user is in the DB
+        try:
+            if self.response["data"]["userBalance"] is None:
+                raise ValueError("Specify the ID of an existing user")
+        except Exception as err:
+            mes = "Error: the users is not found"
+            modify_response(response=self.response, status=400, message=mes, error=err)
+            return self.response, self.response["status"]
+
         # If the amount greater than the user's balance
         try:
             if self.amount > self.response["data"]["userBalance"]:
@@ -53,7 +62,7 @@ class BalanceWriteoff(Balance, Resource):
                      user_id=self.user_id)
             self.response["data"]["userBalance"] = self.response["data"]["userBalance"] - self.amount
             mes = "Success: write-off was successful"
-            modify_response(response=self.response, status=201, message=mes)
+            modify_response(response=self.response, status=200, message=mes)
         except Exception as err:
             mes = "Error: changing the user balance"
             modify_response(response=self.response, status=400, message=mes, error=err)
@@ -61,7 +70,7 @@ class BalanceWriteoff(Balance, Resource):
 
         # Saving the transaction to the DB
         try:
-            db_query(file_path=os.path.join(self.MAIN_SQL_PATH, "add_transaction.sql"),
+            db_query(file_path=os.path.join(self.SQL_PATH_MAIN, "add_transaction.sql"),
                      user_column="sender_uid",
                      user_id=self.user_id,
                      transaction_id=self.transaction_id,

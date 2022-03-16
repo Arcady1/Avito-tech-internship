@@ -56,7 +56,7 @@ class BalanceRefill(Balance, Resource):
                          amount=self.amount)
                 self.response["data"]["userBalance"] = self.response["data"]["userBalance"] + self.amount
                 mes = "Success: user balance increase"
-                modify_response(response=self.response, status=201, message=mes)
+                modify_response(response=self.response, status=200, message=mes)
             except Exception as err:
                 mes = "Error: increasing user account balance"
                 modify_response(response=self.response, status=500, message=mes, error=err)
@@ -64,7 +64,7 @@ class BalanceRefill(Balance, Resource):
 
         # Saving the transaction to the DB
         try:
-            db_query(file_path=os.path.join(self.MAIN_SQL_PATH, "add_transaction.sql"),
+            db_query(file_path=os.path.join(self.SQL_PATH_MAIN, "add_transaction.sql"),
                      user_column="reciever_uid",
                      user_id=self.user_id,
                      transaction_id=self.transaction_id,

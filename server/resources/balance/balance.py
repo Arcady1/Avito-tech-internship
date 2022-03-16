@@ -32,7 +32,7 @@ class Balance(Resource):
                 "currency": "RUB"
             }
         }
-        self.MAIN_SQL_PATH = os.path.join(pathlib.Path(__file__).parent.resolve(), "sql")
+        self.SQL_PATH_MAIN = os.path.join(pathlib.Path(__file__).parent.resolve(), "sql")
 
     def check_amount_value(self, query_argument_with_amount: str):
         """
@@ -91,10 +91,11 @@ class Balance(Resource):
         :param transaction_id: The transaction ID
         """
         try:
-            db_query(file_path=os.path.join(self.MAIN_SQL_PATH, "save_transaction_ids.sql"),
+            db_query(file_path=os.path.join(self.SQL_PATH_MAIN, "save_transaction_ids.sql"),
                      user_id=user_id,
                      transaction_id=transaction_id)
-            self.response["status"] = 200
+            if not self.response["status"]:
+                self.response["status"] = 200
         except Exception as err:
             mes = "Error: adding the transaction to the db"
             modify_response(response=self.response, status=500, message=mes, error=err)
@@ -115,7 +116,7 @@ class Balance(Resource):
 
         # Getting a user's balance in the database by ID
         try:
-            result = db_query(file_path=os.path.join(self.MAIN_SQL_PATH, "balance_status.sql"),
+            result = db_query(file_path=os.path.join(self.SQL_PATH_MAIN, "balance_status.sql"),
                               user_id=user_id)
             if len(result) > 1:
                 raise ValueError(f"Error: there are {len(result)} users with id={user_id} in a DB")

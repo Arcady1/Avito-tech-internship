@@ -50,7 +50,6 @@ class BalanceStatus(Balance, Resource):
             resp = requests.get(url=url,
                                 params=querystring)
             resp = resp.json()
-            print(resp)
             if resp["status"] == "failed":
                 raise ValueError(resp["error"]["message"])
             if not resp["rates"]:
