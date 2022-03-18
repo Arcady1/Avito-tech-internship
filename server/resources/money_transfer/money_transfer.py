@@ -1,4 +1,4 @@
-# Built-in modules
+# Built-in Modules
 import pathlib, os
 
 # Third Party Modules

@@ -1,9 +1,9 @@
-# Built-in modules
+# Built-in Modules
 from string import Template
-import os
 
 # Third Party Modules
 import pymysql
+from flask import current_app
 from pymysql.constants import CLIENT
 
 
@@ -17,12 +17,12 @@ class DatabaseConnection:
     def __enter__(self):
         try:
             self.connection = pymysql.connect(
-                host=os.getenv("MYSQL_LOCAL_HOST"),
-                user=os.getenv("MYSQL_LOCAL_USER"),
-                password=os.getenv("MYSQL_LOCAL_PASSWORD"),
-                database=os.getenv("MYSQL_LOCAL_DB"),
+                host=current_app.config["MYSQL_LOCAL_HOST"],
+                user=current_app.config["MYSQL_LOCAL_USER"],
+                password=current_app.config["MYSQL_LOCAL_PASSWORD"],
+                database=current_app.config["MYSQL_LOCAL_DB"],
                 charset='utf8mb4',
-                port=int(os.getenv("MYSQL_LOCAL_PORT")),
+                port=int(current_app.config["MYSQL_LOCAL_PORT"]),
                 cursorclass=pymysql.cursors.DictCursor,
                 client_flag=CLIENT.MULTI_STATEMENTS
             )

@@ -1,8 +1,17 @@
-from server.app import app
+# Built-in Modules
 import json
+
+# Project Modules
+from server.app import create_app
 
 
 def test_get_balance():
+    """
+    GIVEN
+    WHEN
+    THEN
+    """
+    app = create_app(test_mode=True)
     response = app.test_client().get("http://127.0.0.1:8080/api/v1.0/balance/users?user_id=122")
     resp = json.loads(response.data)
     print(resp["data"])
