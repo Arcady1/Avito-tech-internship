@@ -1,6 +1,7 @@
-# Third Party Modules
+# Built-in Modules
 import os
 
+# Third Party Modules
 from flask import Flask
 from dotenv import load_dotenv
 from flask_restful import Api
@@ -15,7 +16,7 @@ from server.resources.detailed_transactions.detailed_transactions import Detaile
 load_dotenv()
 
 
-def create_app(test_mode: bool = False):
+def create_app(test_mode: bool = True):
     """
     The function creates a Flask App
 
