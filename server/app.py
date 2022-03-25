@@ -16,8 +16,7 @@ from server.resources.detailed_transactions.detailed_transactions import Detaile
 load_dotenv()
 
 
-# TODO test_mode = False
-def create_app(test_mode: bool = True):
+def create_app(test_mode: bool = False):
     """
     The function creates a Flask App
 

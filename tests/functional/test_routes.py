@@ -137,7 +137,6 @@ def test_balance_status_invalid_arguments(test_client):
     # Wrong user ID
     response_3 = test_client.get("api/v1.0/balance/users?user_id=-1")
     response_3_json = json.loads(response_3.data)
-
     response_4 = test_client.get("api/v1.0/balance/users?user_id=0")
     response_4_json = json.loads(response_4.data)
     response_5 = test_client.get("api/v1.0/balance/users?user_id=abc")
@@ -218,7 +217,7 @@ def test_balance_refill_valid_arguments(test_client):
            response_1_json["data"]["reciever"]["id"] is None and \
            response_1_json["data"]["amount"] == float(5000) and \
            response_1_json["data"]["currency"] == "RUB"
-    assert response_2.status_code == 200 and \
+    assert response_2.status_code == 201 and \
            response_2_json["data"]["userId"] == 4 and \
            response_2_json["data"]["userBalance"] == float(5000) and \
            response_2_json["data"]["sender"]["id"] is None and \
@@ -424,7 +423,7 @@ def test_balance_writeoff_invalid_arguments(test_client):
            response_11_json["data"]["currency"] == "RUB"
 
 
-def test_balance_transfer_money_valid_arguments(test_client):
+def test_money_transfer_valid_arguments(test_client):
     """
     GIVEN PUT request to api/v1.0/transfer/users
     WHEN sender_uid and reciever_uid are valid
@@ -445,7 +444,7 @@ def test_balance_transfer_money_valid_arguments(test_client):
            response_1_json["data"]["currency"] == "RUB"
 
 
-def test_balance_writeoff_invalid_arguments(test_client):
+def test_money_transfer_invalid_arguments(test_client):
     """
     GIVEN PUT request to api/v1.0/transfer/users
     WHEN sender_uid or reciever_uid or amount is invalid
@@ -628,3 +627,69 @@ def test_balance_writeoff_invalid_arguments(test_client):
            response_20_json["data"]["reciever"]["balance"] == float(20000) and \
            response_20_json["data"]["amount"] == float(7000) and \
            response_20_json["data"]["currency"] == "RUB"
+
+
+def test_detailed_transactions_valid_arguments(test_client):
+    """
+    GIVEN GET request to api/v1.0/transactions/users
+    WHEN user_id is valid
+    THEN check the response
+    """
+    # Correct user_id. The users is in DB
+    response_1 = test_client.get("api/v1.0/transactions/users?user_id=1")
+    response_1_json = json.loads(response_1.data)
+    response_2 = test_client.get("api/v1.0/transactions/users?user_id=2")
+    response_2_json = json.loads(response_2.data)
+    response_3 = test_client.get("api/v1.0/transactions/users?user_id=3")
+    response_3_json = json.loads(response_3.data)
+    response_4 = test_client.get("api/v1.0/transactions/users?user_id=4")
+    response_4_json = json.loads(response_4.data)
+
+    # Correct user_id. The users is not in DB
+    response_5 = test_client.get("api/v1.0/transactions/users?user_id=5")
+    response_5_json = json.loads(response_5.data)
+
+    assert response_1.status_code == 200 and \
+           response_1_json["data"]["userId"] == 1 and \
+           len(response_1_json["data"]["transactions"]) == 4
+    assert response_2.status_code == 200 and \
+           response_2_json["data"]["userId"] == 2 and \
+           len(response_2_json["data"]["transactions"]) == 2
+    assert response_3.status_code == 200 and \
+           response_3_json["data"]["userId"] == 3 and \
+           len(response_3_json["data"]["transactions"]) == 1
+    assert response_4.status_code == 200 and \
+           response_4_json["data"]["userId"] == 4 and \
+           len(response_4_json["data"]["transactions"]) == 1
+    assert response_5.status_code == 200 and \
+           response_5_json["data"]["userId"] == 5 and \
+           len(response_5_json["data"]["transactions"]) == 0
+
+
+def test_detailed_transactions_invalid_arguments(test_client):
+    """
+    GIVEN GET request to api/v1.0/transactions/users
+    WHEN user_id is invalid
+    THEN check the response
+    """
+    # No arguments
+    response_1 = test_client.get("api/v1.0/transactions/users")
+
+    # Wrong user ID
+    response_2 = test_client.get("api/v1.0/transactions/users?user_id=-1")
+    response_2_json = json.loads(response_2.data)
+    response_3 = test_client.get("api/v1.0/transactions/users?user_id=0")
+    response_3_json = json.loads(response_3.data)
+    response_4 = test_client.get("api/v1.0/transactions/users?user_id=abc")
+    response_4_json = json.loads(response_4.data)
+
+    assert response_1.status_code == 400
+    assert response_2.status_code == 400 and \
+           response_2_json["data"]["userId"] is None and \
+           len(response_2_json["data"]["transactions"]) == 0
+    assert response_3.status_code == 400 and \
+           response_3_json["data"]["userId"] is None and \
+           len(response_3_json["data"]["transactions"]) == 0
+    assert response_4.status_code == 400 and \
+           response_4_json["data"]["userId"] is None and \
+           len(response_4_json["data"]["transactions"]) == 0
