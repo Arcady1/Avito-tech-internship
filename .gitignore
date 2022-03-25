@@ -3,3 +3,4 @@ venv
 *_cache
 .coverage
 cov_html
+.idea

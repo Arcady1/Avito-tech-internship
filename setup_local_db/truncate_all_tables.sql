@@ -1,0 +1,5 @@
+SET FOREIGN_KEY_CHECKS=0;
+TRUNCATE TABLE avito.users;
+TRUNCATE TABLE avito.transactions;
+TRUNCATE TABLE avito.user_transactions;
+SET FOREIGN_KEY_CHECKS=1;
