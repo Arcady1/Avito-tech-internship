@@ -10,19 +10,28 @@ from pymysql.constants import CLIENT
 class DatabaseConnection:
     """ The class initializes database connections. """
 
-    def __init__(self):
+    def __init__(self, connection_conf=None):
         self.connection = None
         self.cursor = None
+        self.conn_conf = connection_conf
 
     def __enter__(self):
         try:
+            if self.conn_conf is None:
+                self.conn_conf = {
+                    "host": current_app.config["MYSQL_LOCAL_HOST"],
+                    "user": current_app.config["MYSQL_LOCAL_USER"],
+                    "password": current_app.config["MYSQL_LOCAL_PASSWORD"],
+                    "database": current_app.config["MYSQL_LOCAL_DB"],
+                    "port": int(current_app.config["MYSQL_LOCAL_PORT"])
+                }
             self.connection = pymysql.connect(
-                host=current_app.config["MYSQL_LOCAL_HOST"],
-                user=current_app.config["MYSQL_LOCAL_USER"],
-                password=current_app.config["MYSQL_LOCAL_PASSWORD"],
-                database=current_app.config["MYSQL_LOCAL_DB"],
+                host=self.conn_conf.get("host"),
+                user=self.conn_conf.get("user"),
+                password=self.conn_conf.get("password"),
+                database=self.conn_conf.get("database"),
                 charset='utf8mb4',
-                port=int(current_app.config["MYSQL_LOCAL_PORT"]),
+                port=self.conn_conf.get("port"),
                 cursorclass=pymysql.cursors.DictCursor,
                 client_flag=CLIENT.MULTI_STATEMENTS
             )

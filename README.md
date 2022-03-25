@@ -10,4 +10,9 @@
 
 ---
 
-Запуск тествы: ```python -m pytest --cov=.```
+Запуск тестов: ```python -m pytest --cov-report html:cov_html --cov-report term --cov=.```
+
+Команды:
+* ```--cov-report html:cov_html``` - генерация cov_html папки. Открыть index.html для просмотра подробого отчета
+* ```--cov-report term``` - отобразить покрытие тестами каждого файла в консоли
+* ```--cov=.``` - указание проекта 

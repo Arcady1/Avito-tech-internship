@@ -2,3 +2,4 @@ venv
 .env
 *_cache
 .coverage
+cov_html
