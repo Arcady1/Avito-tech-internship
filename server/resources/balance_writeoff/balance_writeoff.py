@@ -17,6 +17,7 @@ class BalanceWriteoff(Balance, Resource):
     def __init__(self):
         Balance.__init__(self)
         self.SQL_PATH_WRITEOFF = os.path.join(pathlib.Path(__file__).parent.resolve(), "sql")
+        self.response["data"]["amount"] = None
         self.user_balance = None
         self.transaction_id = id_generator()
         self.user_id = None

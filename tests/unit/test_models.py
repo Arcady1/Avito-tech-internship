@@ -26,4 +26,4 @@ def test_db_connection_error(test_client):
         "port": 8000
     }
     with DatabaseConnection(connection_conf=config) as cursor:
-        assert cursor is not None
+        assert cursor is None

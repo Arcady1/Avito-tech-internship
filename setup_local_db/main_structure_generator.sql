@@ -10,7 +10,7 @@ CREATE TABLE users (
 CREATE TABLE transactions (
     id VARCHAR(40) NOT NULL PRIMARY KEY,
     sender_uid INT,
-    reciever_uid INT,
+    receiver_uid INT,
     date_ TIMESTAMP NOT NULL,
     type_ VARCHAR(20) NOT NULL,
     amount FLOAT(32) NOT NULL

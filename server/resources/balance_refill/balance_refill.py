@@ -17,6 +17,7 @@ class BalanceRefill(Balance, Resource):
     def __init__(self):
         Balance.__init__(self)
         self.SQL_PATH_REFILL = os.path.join(pathlib.Path(__file__).parent.resolve(), "sql")
+        self.response["data"]["amount"] = None
         self.transaction_id = id_generator()
         self.user_id = None
         self.amount = 0
@@ -65,7 +66,7 @@ class BalanceRefill(Balance, Resource):
         # Saving the transaction to the DB
         try:
             db_query(file_path=os.path.join(self.SQL_PATH_MAIN, "add_transaction.sql"),
-                     user_column="reciever_uid",
+                     user_column="receiver_uid",
                      user_id=self.user_id,
                      transaction_id=self.transaction_id,
                      type_="Refill",

@@ -70,6 +70,13 @@ class BalanceStatus(Balance, Resource):
             return self.response, self.response["status"]
         self.response["data"]["userId"] = self.user_id
 
+        # If the user ID is not in the DB
+        if self.user_balance is None:
+            mes = "Error: the user is not found"
+            err = "Use an existing user ID"
+            modify_response(response=self.response, status=404, message=mes, error=err)
+            return self.response, self.response["status"]
+
         # None to 0
         self.user_balance = self.user_balance or float(0)
 

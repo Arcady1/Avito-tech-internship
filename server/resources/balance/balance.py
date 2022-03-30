@@ -2,6 +2,7 @@
 import pathlib, os
 
 # Third Party Modules
+import flask_restful
 from flask_restful import Resource, reqparse
 from pymysql.err import OperationalError, ProgrammingError
 
@@ -20,15 +21,6 @@ class Balance(Resource):
             "data": {
                 "userId": None,
                 "userBalance": None,
-                "sender": {
-                    "id": None,
-                    "balance": None
-                },
-                "reciever": {
-                    "id": None,
-                    "balance": None
-                },
-                "amount": None,
                 "currency": "RUB"
             }
         }
@@ -43,8 +35,17 @@ class Balance(Resource):
         :return: float / None. Value of 'amount' argumnet.
         """
         parser = reqparse.RequestParser()
-        parser.add_argument(query_argument_with_amount, required=True)
+        parser.add_argument(query_argument_with_amount)
         args = parser.parse_args()
+        message_error = "Error: amount is a required parameter"
+        description_error = "Enter an amount"
+
+        # Check if query_argument is empty
+        if args[query_argument_with_amount] is None:
+            flask_restful.abort(http_status_code=400,
+                                status=400,
+                                message=message_error,
+                                description=description_error)
 
         # 'Amount' data type check
         try:
@@ -67,8 +68,17 @@ class Balance(Resource):
         :return: int / None. The user id.
         """
         parser = reqparse.RequestParser()
-        parser.add_argument(query_argument, required=True)
+        parser.add_argument(query_argument)
         args = parser.parse_args()
+        message_error = "Error: user_id is a required parameter"
+        description_error = "Enter a user ID"
+
+        # Check if query_argument is empty
+        if args[query_argument] is None:
+            flask_restful.abort(http_status_code=400,
+                                status=400,
+                                message=message_error,
+                                description=description_error)
 
         # 'UserId' data type check
         try:

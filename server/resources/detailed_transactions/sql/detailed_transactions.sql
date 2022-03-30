@@ -6,7 +6,7 @@ WITH user_trans AS (
 		WHERE uid = $user_id
 )
 
-SELECT transactions.sender_uid, transactions.reciever_uid, transactions.date_, transactions.type_, transactions.amount
+SELECT transactions.sender_uid, transactions.receiver_uid, transactions.date_, transactions.type_, transactions.amount
 FROM user_trans JOIN transactions
 ON user_trans.tid = transactions.id
 ORDER BY date_ DESC, amount DESC;

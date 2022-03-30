@@ -36,7 +36,7 @@ class DetailedTransactions(Balance, Resource):
             }
             if el["type_"] == "Money transfer":
                 tmpl["senderUid"] = el["sender_uid"]
-                tmpl["recieverUid"] = el["reciever_uid"]
+                tmpl["receiverUid"] = el["receiver_uid"]
             prepared_data.append(tmpl)
         return prepared_data
 
