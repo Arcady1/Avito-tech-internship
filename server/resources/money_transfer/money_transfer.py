@@ -50,6 +50,13 @@ class MoneyTransfer(Balance, Resource):
         self.response["data"]["receiver"]["id"] = self.receiver_uid
         self.response["data"]["receiver"]["balance"] = self.receiver_balance
 
+        # If the sender_uid == receiver_uid
+        if self.sender_uid == self.receiver_uid:
+            message = "Error: transaction between user accounts"
+            descr = "The sender_uid and receiver_uid must be different"
+            modify_response(response=self.response, status=400, message=message, error=descr)
+            return self.response, self.response["status"]
+
         # If user ID is not found
         if (self.sender_balance is None) or (self.receiver_balance is None):
             non_uid = self.sender_uid

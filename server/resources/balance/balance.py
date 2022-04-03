@@ -17,7 +17,7 @@ class Balance(Resource):
         self.response = {
             "status": None,
             "message": None,
-            "description": None,
+            "description": "",
             "data": {
                 "userId": None,
                 "userBalance": None,

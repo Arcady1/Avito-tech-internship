@@ -59,7 +59,7 @@ _The example of the response for the user_id **1**_
 {
     "status": 200,
     "message": "Success: getting a users' balance in the database by ID",
-    "description": null,
+    "description": "",
     "data": {
         "userId": 1,
         "userBalance": 5000.0,
@@ -107,7 +107,7 @@ _The example of the response for the user_id **1**_
 {
     "status": 200,
     "message": "Success: user balance increase",
-    "description": null,
+    "description": "",
     "data": {
         "userId": 1,
         "userBalance": 10000.0,
@@ -130,7 +130,7 @@ _Response object:_
 | data -> amount      | The credit amount.                                             |
 
 ---
-### Write off money from the user's balance by ID
+### Write-off money from the user's balance by ID
 
 _Endpoint:_
 
@@ -157,7 +157,7 @@ _The example of the response for the user_id **1**_
 {
     "status": 200,
     "message": "Success: write-off was successful",
-    "description": null,
+    "description": "",
     "data": {
         "userId": 1,
         "userBalance": 7500.0,
@@ -209,7 +209,7 @@ _The example of the response for the sender_uid **2**, receiver_uid **1**_
 {
     "status": 200,
     "message": "Success: money transfer",
-    "description": null,
+    "description": "",
     "data": {
         "currency": "RUB",
         "sender": {
@@ -265,7 +265,7 @@ _The example of the response for the user_id **1**_
 {
     "status": 200,
     "message": "Success: getting users' detailed transactions",
-    "description": null,
+    "description": "",
     "data": {
         "userId": 1,
         "transactions": [
@@ -334,7 +334,7 @@ _Error response example:_
 {
     "status": 400,
     "message": "Error: transfering user balance to 'ASD'",
-    "description": "Error: check the query parameters",
+    "description": "Check the query parameters",
     "data": {
         "userId": 1,
         "userBalance": 5000.0,

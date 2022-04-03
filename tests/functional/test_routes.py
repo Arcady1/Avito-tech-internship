@@ -391,6 +391,10 @@ def test_money_transfer_invalid_arguments(test_client):
     response_20 = test_client.put("api/v1.0/transfer/users?sender_uid=1&receiver_uid=2&amount=7000")
     response_20_json = json.loads(response_20.data)
 
+    # Correct arguments. The receiver and sender IDs are the same
+    response_21 = test_client.put("api/v1.0/transfer/users?sender_uid=1&receiver_uid=1&amount=7000")
+    response_21_json = json.loads(response_21.data)
+
     assert response_1.status_code == 400
     assert response_2.status_code == 400
     assert response_3.status_code == 400
@@ -480,6 +484,13 @@ def test_money_transfer_invalid_arguments(test_client):
            response_20_json["data"]["receiver"]["balance"] == float(20000) and \
            response_20_json["data"]["amount"] == float(7000) and \
            response_20_json["data"]["currency"] == "RUB"
+    assert response_21.status_code == 400 and \
+           response_21_json["data"]["sender"]["id"] == 1 and \
+           response_21_json["data"]["sender"]["balance"] == float(5000) and \
+           response_21_json["data"]["receiver"]["id"] == 1 and \
+           response_21_json["data"]["receiver"]["balance"] == float(5000) and \
+           response_21_json["data"]["amount"] is None and \
+           response_21_json["data"]["currency"] == "RUB"
 
 
 def test_detailed_transactions_valid_arguments(test_client):

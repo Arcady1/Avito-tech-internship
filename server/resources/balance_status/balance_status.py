@@ -53,7 +53,7 @@ class BalanceStatus(Balance, Resource):
             if resp["status"] == "failed":
                 raise ValueError(resp["error"]["message"])
             if not resp["rates"]:
-                raise ValueError("Error: check the query parameters")
+                raise ValueError("Check the query parameters")
 
             transfered_balance = resp["rates"][to_currency]["rate_for_amount"]
             self.response["status"] = 200
