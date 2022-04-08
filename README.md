@@ -72,7 +72,7 @@ _Response object:_
 
 | Property            | Description                                          | 
 |---------------------|------------------------------------------------------|
-| status              | The status of the request.                           |
+| status              | The status of the response.                          |
 | message             | Status description.                                  |
 | description         | Additional information about the response.           |
 | data -> userId      | The requested user ID.                               |
@@ -121,7 +121,7 @@ _Response object:_
 
 | Property            | Description                                                    | 
 |---------------------|----------------------------------------------------------------|
-| status              | The status of the request.                                     |
+| status              | The status of the response.                                    |
 | message             | Status description.                                            |
 | description         | Additional information about the response.                     |
 | data -> userId      | The requested user ID.                                         |
@@ -171,7 +171,7 @@ _Response object:_
 
 | Property            | Description                                                    | 
 |---------------------|----------------------------------------------------------------|
-| status              | The status of the request.                                     |
+| status              | The status of the response.                                    |
 | message             | Status description.                                            |
 | description         | Additional information about the response.                     |
 | data -> userId      | The requested user ID.                                         |
@@ -229,7 +229,7 @@ _Response object:_
 
 | Property                    | Description                                                    | 
 |-----------------------------|----------------------------------------------------------------|
-| status                      | The status of the request.                                     |
+| status                      | The status of the response.                                    |
 | message                     | Status description.                                            |
 | description                 | Additional information about the response.                     |
 | data -> currency            | The currency in which the user balance is indicated. Only RUB. |
@@ -300,7 +300,7 @@ _Response object:_
 
 | Property                                | Description                                       | 
 |-----------------------------------------|---------------------------------------------------|
-| status                                  | The status of the request.                        |
+| status                                  | The status of the response.                       |
 | message                                 | Status description.                               |
 | description                             | Additional information about the response.        |
 | data -> userId                          | The requested user ID.                            |
