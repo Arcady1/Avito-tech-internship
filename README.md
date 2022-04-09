@@ -367,7 +367,3 @@ _Error codes:_
 | 404  | Resource is not found or requested format is incorrect. |
 | 405  | Method is not allowed.                                  |
 | 500  | Server error.                                           |
-
-
-
-
