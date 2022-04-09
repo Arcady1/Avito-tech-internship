@@ -26,15 +26,15 @@ def create_app(test_mode: bool = False):
     app = Flask(__name__)
 
     main_config = {
-        "SECRET_KEY": os.getenv("PROD_SECRET_KEY"),
-        "MYSQL_LOCAL_HOST": os.getenv("MYSQL_LOCAL_HOST_PROD"),
-        "MYSQL_LOCAL_USER": os.getenv("MYSQL_LOCAL_USER_PROD"),
-        "MYSQL_LOCAL_PASSWORD": os.getenv("MYSQL_LOCAL_PASSWORD_PROD"),
-        "MYSQL_LOCAL_DB": os.getenv("MYSQL_LOCAL_DB_PROD"),
-        "MYSQL_LOCAL_PORT": os.getenv("MYSQL_LOCAL_PORT_PROD")
+        "SECRET_KEY": os.getenv("SECRET_KEY_DEV"),
+        "MYSQL_LOCAL_HOST": os.getenv("MYSQL_LOCAL_HOST_DEV"),
+        "MYSQL_LOCAL_USER": os.getenv("MYSQL_LOCAL_USER_DEV"),
+        "MYSQL_LOCAL_PASSWORD": os.getenv("MYSQL_LOCAL_PASSWORD_DEV"),
+        "MYSQL_LOCAL_DB": os.getenv("MYSQL_LOCAL_DB_DEV"),
+        "MYSQL_LOCAL_PORT": os.getenv("MYSQL_LOCAL_PORT_DEV")
     }
     testing_config = {
-        "SECRET_KEY": os.getenv("TEST_SECRET_KEY"),
+        "SECRET_KEY": os.getenv("SECRET_KEY_TEST"),
         "ENV": "development",
         "TESTING": True,
         "MYSQL_LOCAL_DB": os.getenv("MYSQL_LOCAL_DB_TEST")

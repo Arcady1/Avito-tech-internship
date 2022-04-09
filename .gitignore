@@ -4,3 +4,4 @@ venv
 .coverage
 cov_html
 .idea
+.pytest_cache

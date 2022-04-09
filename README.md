@@ -1,36 +1,62 @@
-## Доработать
+## Fundamental requirements
+- Git 
+- Pip
+- Python 3.8
 
-* Написать скрипт с командами для создания всех файлов
-* В том чсисле установка зависимостей
-* Написать документацию
-    * Весь код должен быть выложен на Github с Readme файлом с инструкцией по запуску и примерами запросов/ответов (
-      можно просто описать в Readme методы, можно через Postman, можно в Readme curl запросы скопировать, вы поняли
-      идею...)
-* Сделать пагинацию при возврате ответа
-* Обновить requrements.txt
-* Подготовиться к вопросам по Go
+## How to use
+Clone the repository and open it:
+```shell
+$ git clone https://github.com/Arcady1/Eye-tracker.git
+$ cd Avito-tech-internship/
+```
 
----
+Rename file `.env_dev` to `.env` and fill in the blank fields:
+```commandline
+SECRET_KEY_DEV=7eb160d4-09x0-4792-pbzd-5909ba7a78c3
+SECRET_KEY_TEST=21lm8460-e590-4943-9099-011z823242a8
 
-Запуск тестов: ```python -m pytest --cov-report html:cov_html --cov-report term --cov=.```
+MYSQL_LOCAL_HOST_DEV=localhost
+MYSQL_LOCAL_USER_DEV=___
+MYSQL_LOCAL_PASSWORD_DEV=___
+MYSQL_LOCAL_DB_DEV=avito
+MYSQL_LOCAL_PORT_DEV=3306
 
-Команды:
-* ```--cov-report html:cov_html``` - генерация cov_html папки. Открыть index.html для просмотра подробого отчета
-* ```--cov-report term``` - отобразить покрытие тестами каждого файла в консоли
-* ```--cov=.``` - указание проекта 
+MYSQL_LOCAL_DB_TEST=avito_test
 
-1. В .env_dev изменить:
-   1. MYSQL_LOCAL_HOST_PROD на имя хоста (обчно localhost) 
-   2. MYSQL_LOCAL_USER_PROD на имя пользователя
-   3. MYSQL_LOCAL_PASSWORD_PROD на пароль хоста
-   4. MYSQL_LOCAL_PORT_PROD на порт
-2. Переименовать .env_dev в .env
+CURRENCY_CONVERTER_API_KEY=2daf17a0533b9f07c90721646ef5963ce6a5f3ea
+```
+
+Create and activate a new virtual environment.
+
+Install all the requirements with `pip`:
+```shell
+$ pip install -r requirements.txt
+```
+Start the server.
+```shell
+$ python run.py
+```
 
 
+## Testing
+
+Start tests without coverage:
+```shell
+$ python -m pytest
+```
+
+Or start tests with coverage:
+```shell
+$ python -m pytest --cov-report html:cov_html --cov-report term --cov=.
+```
+
+`--cov-report html:cov_html` generates `cov_html` folder. Open `cov_html/index.html` to view the detailed report.
+
+`--cov-report term` allows to display the test coverage of each file in the terminal.
+
+`--cov=.` indicates the project path.
 
 ## API endpoints
-
----
 
 ### Get the user balance by ID 
 
