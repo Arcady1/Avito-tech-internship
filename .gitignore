@@ -1,6 +1,7 @@
 venv
 .env
 *_cache
+*cache
 .coverage
 cov_html
 .idea

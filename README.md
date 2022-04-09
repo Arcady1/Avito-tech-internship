@@ -10,7 +10,7 @@ $ git clone https://github.com/Arcady1/Eye-tracker.git
 $ cd Avito-tech-internship/
 ```
 
-Rename file `.env_dev` to `.env` and fill in the blank fields:
+Rename file `/server/.env_dev` to `/server/.env` and fill in the blank fields:
 ```commandline
 SECRET_KEY_DEV=7eb160d4-09x0-4792-pbzd-5909ba7a78c3
 SECRET_KEY_TEST=21lm8460-e590-4943-9099-011z823242a8
@@ -32,13 +32,17 @@ Install all the requirements with `pip`:
 ```shell
 $ pip install -r requirements.txt
 ```
+
+Connect to MySQL and run `/setup_local_db/db_generator.sql` script to create a new schema and tables.
+
 Start the server.
 ```shell
 $ python run.py
 ```
 
-
 ## Testing
+
+Connect to MySQL and run `/tests/setup_tests_db/testing_db_generator.sql` script to create a test schema and tables.
 
 Start tests without coverage:
 ```shell
@@ -335,20 +339,6 @@ _Response object:_
 | data -> transactions -> date            | The transaction date.                             |
 | data -> transactions -> senderUid       | The ID of the user who sent money.                |
 | data -> transactions -> receiverUid     | The ID of the user who received money.            |
-
-
-
-
-
-
-
-
-
-
-
-
-
----
 
 ## Errors
 
