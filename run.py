@@ -1,7 +1,8 @@
 """ Project Launcher """
 
-# Project modules
-from server.app import app
+# Project Modules
+from server.app import create_app
 
 if __name__ == "__main__":
-    app.run()
+    app = create_app()
+    app.run(host='localhost', port=8080)

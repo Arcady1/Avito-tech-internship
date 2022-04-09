@@ -1,2 +1,8 @@
 venv
 .env
+*_cache
+.coverage
+cov_html
+.idea
+.pytest_cache
+__pycache__

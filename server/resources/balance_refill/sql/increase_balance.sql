@@ -1,3 +1,3 @@
 UPDATE users
-SET balance=balance + $amount
-WHERE id=$user_id;
+SET balance = balance + $amount
+WHERE id = $user_id;

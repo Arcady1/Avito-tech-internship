@@ -1,75 +1,88 @@
-# Built-in modules
-import pathlib, os
+# Built-in Modules
+import os
 
 # Third Party Modules
 from flask_restful import Resource, reqparse
-from pymysql.err import OperationalError
+import requests
 
 # Project Modules
-from server.db.work_with_db import db_query
+from server.resources.balance.balance import Balance
+from server.utils import modify_response
 
 
-class BalanceStatus(Resource):
+class BalanceStatus(Balance, Resource):
     """ Class for working with the client's balance. """
 
     def __init__(self):
-        self.SQL_PATH = os.path.join(pathlib.Path(__file__).parent.resolve(), "sql")
+        Balance.__init__(self)
         self.user_id = None
+        self.user_balance = None
+        self.currency = "RUB"
 
-    def get_user_balance(self):
+    def transform_currency(self, query_argument_with_currency: str, amount_RUB: float):
         """
-        The function gets user's balance from the DB by ID.
+        The function converts RUB to 'currency'.
+        The function modifies a response.
 
-        :return: tuple. Server response and status.
+        :param query_argument_with_currency: str. The name of query parametr with a 'currency'.
+        :param amount_RUB: float. Amount of money to convert.
+        :return: tuple. Converted amount and currency.
         """
-        # Server response
-        response = {
-            "status": None,
-            "message": "",
-            "description": "",
-            "data": {
-                "userId": None,
-                "userBalance": None,
-            }
-        }
         parser = reqparse.RequestParser()
-        parser.add_argument("user_id", required=True)
+        parser.add_argument(query_argument_with_currency, required=False)
         args = parser.parse_args()
+        to_currency = args[query_argument_with_currency]
 
-        # 'UserId' data type check
+        if to_currency is None:
+            return (amount_RUB, "RUB")
+        to_currency = to_currency.upper()
+        if to_currency == "RUB":
+            return (amount_RUB, "RUB")
+
+        # Transfer balance to 'currency'
         try:
-            self.user_id = int(args["user_id"])
-            if self.user_id < 0:
-                raise ValueError("Error: user_id value must be more than zero")
-            response["data"]["userId"] = self.user_id
+            url = "https://api.getgeoapi.com/v2/currency/convert"
+            querystring = {"api_key": os.getenv("CURRENCY_CONVERTER_API_KEY"),
+                           "from": "RUB",
+                           "to": to_currency,
+                           "amount": amount_RUB,
+                           "format": "json"}
+            resp = requests.get(url=url,
+                                params=querystring)
+            resp = resp.json()
+            if resp["status"] == "failed":
+                raise ValueError(resp["error"]["message"])
+            if not resp["rates"]:
+                raise ValueError("Check the query parameters")
+
+            transfered_balance = resp["rates"][to_currency]["rate_for_amount"]
+            self.response["status"] = 200
+            return (float(transfered_balance), to_currency)
         except Exception as err:
-            response["status"] = 400
-            response["message"] = "Error: user_id type must be integer and the value must be more than zero"
-            response["description"] = str(err)
-            return response, response["status"]
-
-        # Getting a user's balance in the database by ID
-        try:
-            result = db_query(file_path=os.path.join(self.SQL_PATH, "balance_status.sql"),
-                              user_id=self.user_id)
-            if result:
-                response["data"]["userBalance"] = result[0]["balance"]
-            response["status"] = 200
-            response["message"] = "Success: getting a user's balance in the database by ID"
-        except AttributeError:
-            response["status"] = 400
-            response["message"] = "Error: connecting to MySQL database"
-        except OperationalError:
-            response["status"] = 400
-            response["message"] = "Error: invalid MySQL database name"
-        except Exception:
-            response["message"] = "Error: working with MySQL database"
-            response["status"] = 500
-        return response, response["status"]
+            mes = f"Error: transfering user balance to '{to_currency}'"
+            modify_response(response=self.response, status=400, message=mes, error=err)
+            return (amount_RUB, "RUB")
 
     def get(self):
-        """
-        TODO
-        :return:
-        """
-        return self.get_user_balance()
+        # Getting user balance by 'user_id'
+        self.user_id, self.user_balance = self.get_user_balance(query_argument_with_uid="user_id")
+        if self.response["status"] >= 400:
+            return self.response, self.response["status"]
+        self.response["data"]["userId"] = self.user_id
+
+        # If the user ID is not in the DB
+        if self.user_balance is None:
+            mes = "Error: the user is not found"
+            err = "Use an existing user ID"
+            modify_response(response=self.response, status=404, message=mes, error=err)
+            return self.response, self.response["status"]
+
+        # None to 0
+        self.user_balance = self.user_balance or float(0)
+
+        transfered_balance, currency = self.transform_currency(query_argument_with_currency="currency",
+                                                               amount_RUB=self.user_balance)
+        self.response["data"]["userBalance"] = transfered_balance
+        self.response["data"]["currency"] = currency
+
+        return self.response, self.response["status"]

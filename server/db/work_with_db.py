@@ -1,28 +1,39 @@
-# Built-in modules
+# Built-in Modules
 from string import Template
-import os
 
 # Third Party Modules
 import pymysql
+from flask import current_app
+from pymysql.constants import CLIENT
 
 
 class DatabaseConnection:
     """ The class initializes database connections. """
 
-    def __init__(self):
+    def __init__(self, connection_conf=None):
         self.connection = None
         self.cursor = None
+        self.conn_conf = connection_conf
 
     def __enter__(self):
         try:
+            if self.conn_conf is None:
+                self.conn_conf = {
+                    "host": current_app.config["MYSQL_LOCAL_HOST"],
+                    "user": current_app.config["MYSQL_LOCAL_USER"],
+                    "password": current_app.config["MYSQL_LOCAL_PASSWORD"],
+                    "database": current_app.config["MYSQL_LOCAL_DB"],
+                    "port": int(current_app.config["MYSQL_LOCAL_PORT"])
+                }
             self.connection = pymysql.connect(
-                host=os.getenv("MYSQL_HOST"),
-                user=os.getenv("MYSQL_USER"),
-                password=os.getenv("MYSQL_PASSWORD"),
-                database=os.getenv("MYSQL_DB"),
+                host=self.conn_conf.get("host"),
+                user=self.conn_conf.get("user"),
+                password=self.conn_conf.get("password"),
+                database=self.conn_conf.get("database"),
                 charset='utf8mb4',
-                port=int(os.getenv("MYSQL_PORT")),
-                cursorclass=pymysql.cursors.DictCursor
+                port=self.conn_conf.get("port"),
+                cursorclass=pymysql.cursors.DictCursor,
+                client_flag=CLIENT.MULTI_STATEMENTS
             )
             self.cursor = self.connection.cursor()
             return self.cursor
@@ -59,10 +70,10 @@ def read_query_from_file(file_path: str, params: dict):
 def db_query(file_path: str, **params):
     """
     The function executes a database query and returns a response.
-    TODO
+
     :param file_path: str. A path to the file.
     :param params: dict. Query parameters.
-    :return: None.
+    :return: list / None. Query results.
     """
     with DatabaseConnection() as cursor:
         sql_query = read_query_from_file(file_path=file_path, params=params)
