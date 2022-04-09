@@ -1,9 +1,8 @@
 venv
+.idea
+__pycache__
 .env
-*_cache
 *cache
 .coverage
 cov_html
-.idea
 .pytest_cache
-__pycache__
