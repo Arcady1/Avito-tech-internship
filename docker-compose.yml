@@ -1,0 +1,38 @@
+version: "3.8"
+
+services:
+  server:
+    container_name: app
+    build: .
+    restart: always
+    ports:
+      - 8080:8080
+    depends_on:
+      - database
+    volumes:
+      - application:/usr/src/app
+    networks:
+      - fullstack
+
+  database:
+    image: mysql:latest
+    restart: always
+    env_file:
+      - /server/.env
+    environment:
+      - MYSQL_USER=${MYSQL_LOCAL_USER_DEV}
+      - MYSQL_PASSWORD=${MYSQL_LOCAL_PASSWORD_DEV}
+    ports:
+      - ${MYSQL_LOCAL_PORT_DEV}:${MYSQL_LOCAL_PORT_DEV}
+    volumes:
+      - db:/usr/src/mysql/data
+    networks:
+      - fullstack
+
+volumes:
+  application:
+  db:
+
+networks:
+  fullstack:
+    driver: bridge
