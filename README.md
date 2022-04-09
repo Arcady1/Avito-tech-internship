@@ -10,7 +10,7 @@ $ git clone https://github.com/Arcady1/Eye-tracker.git
 $ cd Avito-tech-internship/
 ```
 
-Rename file `/server/.env_dev` to `/server/.env` and fill in the blank fields:
+Make a copy of `/server/.env_dev` file and rename it to `/server/.env`. Fill in the blank fields:
 ```commandline
 SECRET_KEY_DEV=7eb160d4-09x0-4792-pbzd-5909ba7a78c3
 SECRET_KEY_TEST=21lm8460-e590-4943-9099-011z823242a8
