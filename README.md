@@ -16,7 +16,7 @@ $ cd Avito-tech-internship/
 
 Copy `.env.example` file and rename it to `.env`. Fill in the blank fields:
 ```commandline
-APP_PORT=8080
+APP_PORT=5000
 
 SECRET_KEY_DEV=7eb160d4-09x0-4792-pbzd-5909ba7a78c3
 SECRET_KEY_TEST=21lm8460-e590-4943-9099-011z823242a8
@@ -42,14 +42,14 @@ $ pip install -r requirements.txt
 ```
 Start the server:
 ```shell
-$ export FLASK_APP=run.py && flask run -h 127.0.0.1 -p 8000
+$ export FLASK_APP=run.py && flask run
 ```
 
 #### With Docker
 
 Copy `.env.docker` file and rename it to `.env`.
 ```commandline
-APP_PORT=8080
+APP_PORT=5000
 
 SECRET_KEY_DEV=Xkai60d4-09x0-4792-Mlzd-KJio7a9179C3
 SECRET_KEY_TEST=29aPLuI0-pd90-9172-mN9a-08akxP28xka8
@@ -105,7 +105,7 @@ $ docker-compose exec server python -m pytest --cov-report term --cov=.
 
 ## API endpoints
 
-**Note:** use `http://127.0.0.1:8000` host if you are running the application WITHOUT docker and `THIS` host if you are USING docker.
+Use `http://127.0.0.1:5000` host.
 
 ### Get the user balance by ID 
 
