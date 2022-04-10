@@ -3,15 +3,17 @@
 - Pip
 - Python 3.8
 
-## How to use
+## How to use (without Docker)
 Clone the repository and open it:
 ```shell
 $ git clone https://github.com/Arcady1/Eye-tracker.git
 $ cd Avito-tech-internship/
 ```
 
-Rename file `.env_dev` to `.env` and fill in the blank fields:
+Copy `.env.example` file and rename it to `.env`. Fill in the blank fields:
 ```commandline
+APP_PORT=8080
+
 SECRET_KEY_DEV=7eb160d4-09x0-4792-pbzd-5909ba7a78c3
 SECRET_KEY_TEST=21lm8460-e590-4943-9099-011z823242a8
 
@@ -26,6 +28,8 @@ MYSQL_LOCAL_DB_TEST=avito_test
 CURRENCY_CONVERTER_API_KEY=2daf17a0533b9f07c90721646ef5963ce6a5f3ea
 ```
 
+Start the MySQL script from `/init/init.sql` file to generate a new schema and tables.
+
 Create and activate a new virtual environment.
 
 Install all the requirements with `pip`:
@@ -39,6 +43,8 @@ $ python run.py
 
 
 ## Testing
+
+Start the MySQL script from `/tests/tests_db/init.sql` file to generate the tests schema and tables.
 
 Start tests without coverage:
 ```shell
@@ -336,20 +342,6 @@ _Response object:_
 | data -> transactions -> senderUid       | The ID of the user who sent money.                |
 | data -> transactions -> receiverUid     | The ID of the user who received money.            |
 
-
-
-
-
-
-
-
-
-
-
-
-
----
-
 ## Errors
 
 In case the request fails an error will be returned in JSON format.
@@ -377,7 +369,3 @@ _Error codes:_
 | 404  | Resource is not found or requested format is incorrect. |
 | 405  | Method is not allowed.                                  |
 | 500  | Server error.                                           |
-
-
-
-
