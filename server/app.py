@@ -3,8 +3,8 @@ import os
 
 # Third Party Modules
 from flask import Flask
-from dotenv import load_dotenv
 from flask_restful import Api
+from dotenv import load_dotenv, find_dotenv
 
 # Project Modules
 from server.resources.balance_refill.balance_refill import BalanceRefill
@@ -13,7 +13,7 @@ from server.resources.balance_writeoff.balance_writeoff import BalanceWriteoff
 from server.resources.money_transfer.money_transfer import MoneyTransfer
 from server.resources.detailed_transactions.detailed_transactions import DetailedTransactions
 
-load_dotenv()
+load_dotenv(find_dotenv())
 
 
 def create_app(test_mode: bool = False):

@@ -1,13 +1,14 @@
+-- Creating "avito" DB
 CREATE DATABASE IF NOT EXISTS avito;
 
 USE avito;
 
-CREATE TABLE IF NOT EXISTS users (
+CREATE TABLE IF NOT EXISTS avito.users (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     balance FLOAT(32)
 );
 
-CREATE TABLE IF NOT EXISTS transactions (
+CREATE TABLE IF NOT EXISTS avito.transactions (
     id VARCHAR(40) NOT NULL PRIMARY KEY,
     sender_uid INT,
     receiver_uid INT,
@@ -16,7 +17,7 @@ CREATE TABLE IF NOT EXISTS transactions (
     amount FLOAT(32) NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS user_transactions (
+CREATE TABLE IF NOT EXISTS avito.user_transactions (
     uid INT NOT NULL,
     tid VARCHAR(40) NOT NULL,
     FOREIGN KEY (uid) REFERENCES users(id),
