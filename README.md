@@ -98,7 +98,7 @@ Start the docker server as shown above.
 
 Run the command:
 ```shell
-$ docker-compose exec server python -m pytest
+$ docker-compose exec server python -m pytest --cov-report term --cov=.
 ```
 
 **Note:** if you run the tests again, you have to rerun the MySQL script from `/init_db/tests.sql`.
