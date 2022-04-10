@@ -1,14 +1,18 @@
 ## Fundamental requirements
 - Git 
 - Pip
-- Python 3.8
+- Python 3.8.10
+- Docker (optional)
+- Docker-compose (optional)
 
-## How to use (without Docker)
+## How to use 
 Clone the repository and open it:
 ```shell
-$ git clone https://github.com/Arcady1/Eye-tracker.git
+$ git clone https://github.com/Arcady1/Avito-tech-internship.git
 $ cd Avito-tech-internship/
 ```
+
+#### Without Docker
 
 Copy `.env.example` file and rename it to `.env`. Fill in the blank fields:
 ```commandline
@@ -28,7 +32,7 @@ MYSQL_LOCAL_DB_TEST=avito_test
 CURRENCY_CONVERTER_API_KEY=2daf17a0533b9f07c90721646ef5963ce6a5f3ea
 ```
 
-Start the MySQL script from `/init/init.sql` file to generate a new schema and tables.
+Start the MySQL script from `/init_db/main.sql` file to generate a new schema and tables.
 
 Create and activate a new virtual environment.
 
@@ -36,15 +40,41 @@ Install all the requirements with `pip`:
 ```shell
 $ pip install -r requirements.txt
 ```
-Start the server.
+Start the server:
 ```shell
-$ python run.py
+$ export FLASK_APP=run.py && flask run -h 127.0.0.1 -p 8000
 ```
 
+#### With Docker
 
-## Testing
+Copy `.env.docker` file and rename it to `.env`.
+```commandline
+APP_PORT=8080
 
-Start the MySQL script from `/tests/tests_db/init.sql` file to generate the tests schema and tables.
+SECRET_KEY_DEV=Xkai60d4-09x0-4792-Mlzd-KJio7a9179C3
+SECRET_KEY_TEST=29aPLuI0-pd90-9172-mN9a-08akxP28xka8
+
+MYSQL_LOCAL_HOST_DEV=database
+MYSQL_LOCAL_USER_DEV=root
+MYSQL_LOCAL_PASSWORD_DEV=root
+MYSQL_LOCAL_DB_DEV=avito
+MYSQL_LOCAL_PORT_DEV=3306
+
+MYSQL_LOCAL_DB_TEST=avito_test
+
+CURRENCY_CONVERTER_API_KEY=2daf17a0533b9f07c90721646ef5963ce6a5f3ea
+```
+
+Start docker:
+```shell
+$ docker-compose up --build
+```
+
+## Testing 
+
+#### Without Docker
+
+Start the MySQL script from `/init_db/tests.sql` file to generate the test schema and tables.
 
 Start tests without coverage:
 ```shell
@@ -62,30 +92,43 @@ $ python -m pytest --cov-report html:cov_html --cov-report term --cov=.
 
 `--cov=.` indicates the project path.
 
+#### With Docker
+
+Start the docker server as shown above.
+
+Run the command:
+```shell
+$ docker-compose exec server python -m pytest
+```
+
+**Note:** if you run the tests again, you have to rerun the MySQL script from `/init_db/tests.sql`.
+
 ## API endpoints
+
+**Note:** use `http://127.0.0.1:8000` host if you are running the application WITHOUT docker and `THIS` host if you are USING docker.
 
 ### Get the user balance by ID 
 
-_Endpoint:_
+Endpoint:
 
-```GET: http://127.0.0.1:8080/api/v1.0/balance/users```
+```HTTP GET /api/v1.0/balance/users```
 
-_Example request:_
+Example request:
 
 ```
-GET: http://127.0.0.1:8080/api/v1.0/balance/users
+HTTP GET /api/v1.0/balance/users
 ?user_id={UserID}
 &currency=RUB
 ```
 
-_Request parameters:_
+Request parameters:
 
 | Parameter | Description                                                            | Required |
 |-----------|------------------------------------------------------------------------|----------|
 | user_id   | The ID of the user whose balance you want to check.                    | True     |
 | currency  | Currency in which you need to receive the balance: RUB, EUR, USD, etc. | False    |
 
-_The example of the response for the user_id **1**_
+The example of the response for the user_id **1**
 
 ```json
 {
@@ -100,7 +143,7 @@ _The example of the response for the user_id **1**_
 }
 ```
 
-_Response object:_
+Response object:
 
 | Property            | Description                                          | 
 |---------------------|------------------------------------------------------|
@@ -114,26 +157,26 @@ _Response object:_
 ---
 ### Refill the user balance by ID
 
-_Endpoint:_
+Endpoint:
 
-```PUT: http://127.0.0.1:8080/api/v1.0/refill/users```
+```HTTP PUT /api/v1.0/refill/users```
 
-_Example request:_
+Example request:
 
 ```
-PUT: http://127.0.0.1:8080/api/v1.0/refill/users
+HTTP PUT /api/v1.0/refill/users
 ?user_id={UserID}
 &amount=5000
 ```
 
-_Request parameters:_
+Request parameters:
 
 | Parameter | Description                                          | Required |
 |-----------|------------------------------------------------------|----------|
 | user_id   | The ID of the user whose balance you want to refill. | True     |
 | amount    | The amount to be credited to the user account.       | True     |
 
-_The example of the response for the user_id **1**_
+The example of the response for the user_id **1**
 
 ```json
 {
@@ -149,7 +192,7 @@ _The example of the response for the user_id **1**_
 }
 ```
 
-_Response object:_
+Response object:
 
 | Property            | Description                                                    | 
 |---------------------|----------------------------------------------------------------|
@@ -164,26 +207,26 @@ _Response object:_
 ---
 ### Write-off money from the user's balance by ID
 
-_Endpoint:_
+Endpoint:
 
-```PUT: http://127.0.0.1:8080/api/v1.0/writeoff/users```
+```HTTP PUT /api/v1.0/writeoff/users```
 
-_Example request:_
+Example request:
 
 ```
-PUT: http://127.0.0.1:8080/api/v1.0/writeoff/users
+HTTP PUT /api/v1.0/writeoff/users
 ?user_id={UserID}
 &amount=2500
 ```
 
-_Request parameters:_
+Request parameters:
 
 | Parameter | Description                                                 | Required |
 |-----------|-------------------------------------------------------------|----------|
 | user_id   | The user ID from whose balance you want to write off money. | True     |
 | amount    | Amount to be debited from the user's balance.               | True     |
 
-_The example of the response for the user_id **1**_
+The example of the response for the user_id **1**
 
 ```json
 {
@@ -199,7 +242,7 @@ _The example of the response for the user_id **1**_
 }
 ```
 
-_Response object:_
+Response object:
 
 | Property            | Description                                                    | 
 |---------------------|----------------------------------------------------------------|
@@ -214,20 +257,20 @@ _Response object:_
 ---
 ### Transfer money between the users accounts
 
-_Endpoint:_
+Endpoint:
 
-```PUT: http://127.0.0.1:8080/api/v1.0/transfer/users```
+```HTTP PUT /api/v1.0/transfer/users```
 
-_Example request:_
+Example request:
 
 ```
-PUT: http://127.0.0.1:8080/api/v1.0/transfer/users
+HTTP PUT /api/v1.0/transfer/users
 ?sender_uid={SenderUserID}
 &receiver_uid={ReceiverUserID}
 &amount=15000
 ```
 
-_Request parameters:_
+Request parameters:
 
 | Parameter    | Description           | Required |
 |--------------|-----------------------|----------|
@@ -235,7 +278,7 @@ _Request parameters:_
 | receiver_uid | The receiver user ID. | True     |
 | amount       | The transfer amount.  | True     |
 
-_The example of the response for the sender_uid **2**, receiver_uid **1**_
+The example of the response for the sender_uid **2**, receiver_uid **1**
 
 ```json
 {
@@ -257,7 +300,7 @@ _The example of the response for the sender_uid **2**, receiver_uid **1**_
 }
 ```
 
-_Response object:_
+Response object:
 
 | Property                    | Description                                                    | 
 |-----------------------------|----------------------------------------------------------------|
@@ -274,24 +317,24 @@ _Response object:_
 ---
 ### Get a list of user transactions by ID
 
-_Endpoint:_
+Endpoint:
 
-```GET: http://127.0.0.1:8080/api/v1.0/transactions/users```
+```HTTP GET /api/v1.0/transactions/users```
 
-_Example request:_
+Example request:
 
 ```
-GET: http://127.0.0.1:8080/api/v1.0/transactions/users
+HTTP GET /api/v1.0/transactions/users
 user_id={UserID}
 ```
 
-_Request parameters:_
+Request parameters:
 
 | Parameter | Description                                                      | Required |
 |-----------|------------------------------------------------------------------|----------|
 | user_id   | The ID of the user whose transactions list you want to retrieve. | True     |
 
-_The example of the response for the user_id **1**_
+The example of the response for the user_id **1**
 
 ```json
 {
@@ -328,7 +371,7 @@ _The example of the response for the user_id **1**_
 }
 ```
 
-_Response object:_
+Response object:
 
 | Property                                | Description                                       | 
 |-----------------------------------------|---------------------------------------------------|
@@ -346,7 +389,7 @@ _Response object:_
 
 In case the request fails an error will be returned in JSON format.
 
-_Error response example:_
+Error response example:
 
 ```json
 {
@@ -361,7 +404,7 @@ _Error response example:_
 }
 ```
 
-_Error codes:_
+Error codes:
 
 | Code | Description                                             | 
 |------|---------------------------------------------------------|

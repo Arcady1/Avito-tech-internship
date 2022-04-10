@@ -12,6 +12,4 @@ RUN pip install -r requirements.txt
 # Copy all the content from the local file to the image
 COPY . /app/
 
-EXPOSE 8080
-
-CMD [ "python", "run.py" ]
+ENTRYPOINT [ "python", "run.py" ]
