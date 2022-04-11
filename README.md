@@ -76,8 +76,6 @@ $ docker-compose up --build
 
 Start the MySQL script from `/init_db/tests.sql` file to generate the test schema and tables.
 
-Connect to MySQL and run `/tests/setup_tests_db/testing_db_generator.sql` script to create a test schema and tables.
-
 Start tests without coverage:
 ```shell
 $ python -m pytest
