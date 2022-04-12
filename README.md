@@ -1,7 +1,15 @@
+<h1 align="center">
+    <img src="https://m.foolcdn.com/media/affiliates/images/Bank_to_bank_GettyImages-900917830_QB3CjfS.width-1200.jpg" alt="" width="200px"></img>
+</h1>
+
+This is a [test assignment for an internship in Avito][1].
+Developed an API with Flask to work with the balance of the user.
+
 ## Fundamental requirements
-- Git 
+- Git
 - Pip
 - Python 3.8.10
+- MySQL 8.0.28
 - Docker (optional)
 - Docker-compose (optional)
 
@@ -412,3 +420,8 @@ Error codes:
 | 404  | Resource is not found or requested format is incorrect. |
 | 405  | Method is not allowed.                                  |
 | 500  | Server error.                                           |
+
+## License
+MIT
+
+[1]: https://github.com/avito-tech/job-backend-trainee-assignment
